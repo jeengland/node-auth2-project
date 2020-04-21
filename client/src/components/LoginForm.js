@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 const LoginForm = () => {
     const history = useHistory();
@@ -26,13 +26,16 @@ const LoginForm = () => {
             })
     }
     return (
-        <form onSubmit={handleSubmit}>
-            <label htmlFor='username'>Username:</label>
-            <input type='text' id='username' name='username' value={state.username} onChange={handleChange}/>
-            <label htmlFor='password'>Password:</label>
-            <input type='password' id='password' name='password' value={state.password} onChange={handleChange}/>
-            <input type='submit' />
-        </form>
+        <>
+            <form onSubmit={handleSubmit}>
+                <label htmlFor='username'>Username:</label>
+                <input type='text' id='username' name='username' value={state.username} onChange={handleChange}/>
+                <label htmlFor='password'>Password:</label>
+                <input type='password' id='password' name='password' value={state.password} onChange={handleChange}/>
+                <input type='submit' />
+            </form>
+            <Link to='/signup'>Create an account</Link>
+        </>
     )
 }
 

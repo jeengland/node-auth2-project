@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import axiosWithCreds from '../utils/axiosWithCreds';
+import axios from 'axios';
+import { useHistory } from 'react-router-dom';
 
 const RegisterForm = () => {
-    const [state, setState] = useState({ username: '', password: '' });
+    const history = useHistory();
+    const [state, setState] = useState({ username: '', password: '', department: '' });
     const handleChange = (event) => {
         setState({
             ...state,
@@ -11,15 +13,25 @@ const RegisterForm = () => {
     }
     const handleSubmit = (event) => {
         event.preventDefault();
-        axiosWithCreds
+        axios
             .post('http://localhost:5000/api/register', state)
             .then((response) => {
-                console.log(response);
-                setState({ username: '', password: '' });
-            })
+                setState({ username: '', password: '', department: '' });
+                axios
+                    .post('http://localhost:5000/api/login', {
+                         username: state.username, password: state.password
+                        })
+                    .then((response) => {
+                            localStorage.setItem('token', response.data.token);
+                            history.push('/users');
+                        })
+                    .catch((error) => {
+                            console.error(error);
+                        })
+                })
             .catch((error) => {
                 console.error(error);    
-                setState({ username: '', password: '' });        
+                setState({ username: '', password: '', department: '' });        
             })
     }
     return (
@@ -28,6 +40,8 @@ const RegisterForm = () => {
             <input type='text' id='username' name='username' value={state.username} onChange={handleChange}/>
             <label htmlFor='password'>Password:</label>
             <input type='password' id='password' name='password' value={state.password} onChange={handleChange}/>
+            <label htmlFor='department'>Department:</label>
+            <input type='text' id='department' name='department' value={state.department} onChange={handleChange}/>
             <input type='submit'/>
         </form>
     )
