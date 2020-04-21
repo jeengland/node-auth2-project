@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axiosWithCreds from '../utils/axiosWithCreds';
+import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 
 const LoginForm = () => {
@@ -13,10 +13,10 @@ const LoginForm = () => {
     }
     const handleSubmit = (event) => {
         event.preventDefault();
-        axiosWithCreds
+        axios
             .post('http://localhost:5000/api/login', state)
             .then((response) => {
-                console.log(response);
+                localStorage.setItem('token', res.data.token);
                 setState({ username: '', password: '' });
                 history.push('/users');
             })
