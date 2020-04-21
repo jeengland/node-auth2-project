@@ -2,7 +2,7 @@
 exports.up = function(knex) {
     return knex.schema
         .table('users', tbl => {
-            tbl.string('department').notNullable().defaultTo('');
+            tbl.string('department').notNullable().defaultTo('no-department');
         })
 
 };
