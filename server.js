@@ -2,15 +2,18 @@ const express = require('express');
 const server = express();
 const bcrypt = require('bcryptjs');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 
 const Auth = require('./server-helpers.js');
+
+const authenticator = require('./auth/authenticator.js');
 
 require('dotenv').config();
 
 server.use(express.json());
 server.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 
-server.get('/api/users', (req, res) => {
+server.get('/api/users', authenticator, (req, res) => {
     Auth.getUsers()
         .then((users) => {
             res.status(200).json({ data: users })
@@ -44,9 +47,10 @@ server.post('/api/login', (req, res) => {
     Auth.findUser(username)
         .then((user) => {
             if (user && bcrypt.compareSync(password, user.password)) {
-                req.session.user = user;
+                const token = tokenGen(user);
                 res.status(200).json({
-                    message: `Welcome, ${user.username}`
+                    message: `Welcome, ${user.username}`,
+                    token,
                 })
             } else {
                 res.status(401).json({
@@ -61,5 +65,18 @@ server.post('/api/login', (req, res) => {
             })
         })
 })
+
+function tokenGen(user) {
+    const payload = {
+        subject: user.id,
+        username: user.username
+    }
+
+    const options = {
+        expiresIn: '1h'
+    }
+
+    return jwt.sign(payload, process.env.SECRET, options);
+}
 
 module.exports = server;
