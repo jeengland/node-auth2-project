@@ -1,13 +1,13 @@
-import axios from 'axios';
+import axios from "axios";
 
 const axiosWithCreds = () => {
-    const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
 
-    return axios.create({
-        headers: {
-            Authorization: token,
-        }
-    })
-}
+  return axios.create({
+    headers: {
+      authorization: token
+    }
+  });
+};
 
 export default axiosWithCreds;

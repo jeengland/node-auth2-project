@@ -16,7 +16,7 @@ const LoginForm = () => {
         axios
             .post('http://localhost:5000/api/login', state)
             .then((response) => {
-                localStorage.setItem('token', res.data.token);
+                localStorage.setItem('token', response.data.token);
                 setState({ username: '', password: '' });
                 history.push('/users');
             })
