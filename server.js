@@ -14,15 +14,31 @@ server.use(express.json());
 server.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 
 server.get('/api/users', authenticator, (req, res) => {
-    Auth.getUsers()
-        .then((users) => {
-            res.status(200).json({ data: users })
-        })
-        .catch((error) => {
-            console.error(error);
-            res.status(500).json({
-                message: 'Unable to retrieve users.'
-            })
+    Auth.findUserById(req.decodedToken.subject)
+        .then((user) => {
+            if (user.department === 'admin') {
+                Auth.getAllUsers()
+                    .then((users) => {
+                        res.status(200).json({ data: users })
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                        res.status(500).json({
+                            message: 'Unable to retrieve users.'
+                        })
+                    })
+            } else {
+                Auth.getUsers(user.department)
+                    .then((users) => {
+                        res.status(200).json({ data: users })
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                        res.status(500).json({
+                            message: 'Unable to retrieve users.'
+                        })
+                    })
+            }
         })
 })
 
